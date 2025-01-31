@@ -1,18 +1,25 @@
-// Willekeurige sensor data genereren
+/**
+ * Generates simulated sensor data for spacecraft monitoring
+ * @param {string} sensor - Sensor type to generate data for
+ * @returns {number|null} - Simulated sensor value or null for invalid sensor
+ */
 function generateSensorData(sensor) {
     switch (sensor) {
         case 'temperature':
-            return Math.floor(Math.random() * 100); // Simuleer temperatuur (0-100°C)
+            return Math.floor(Math.random() * 100);
         case 'humidity':
-            return Math.floor(Math.random() * 100); // Simuleer luchtvochtigheid (0-100%)
+            return Math.floor(Math.random() * 100);
         case 'pressure':
-            return Math.floor(Math.random() * 2000) + 800; // Simuleer druk (800-2800 hPa)
+            return Math.floor(Math.random() * 2000) + 800;
         default:
             return null;
     }
 }
 
-// Willekeurige grondstoffen genereren (ijzer, goud, zilver)
+/**
+ * Generates random resource quantities for mining operations
+ * @returns {Object} - Resource quantities {iron: number, gold: number, silver: number}
+ */
 function generateResourceData() {
     return {
         iron: Math.floor(Math.random() * 100),

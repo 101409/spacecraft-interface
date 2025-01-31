@@ -11,22 +11,38 @@
 
 <body>
     <div class="container">
-        <img src="/images/rover.png" />
+        <img src="/images/rover.png" alt="Spacecraft Rover" />
+        <div id="error-display" class="error-alert"></div>
+        
         <div id="status">
-            <p id="power">Power: <span>Loading...</span></p>
+            <p id="power" class="off">Power: <span>Loading...</span></p>
             <div id="speed-fuel">
                 <p id="speed">Speed: Loading...</p>
                 <p id="fuel">Fuel: Loading...</p>
             </div>
+
+            <!-- Sensor Data -->
+            <div id="sensor-data">
+                <p id="temperature">Temperature: Loading...</p>
+                <p id="humidity">Humidity: Loading...</p>
+                <p id="pressure">Pressure: Loading...</p>
+            </div>
+
+            <!-- Resource Data -->
+            <div id="resource-data">
+                <p id="iron">Iron: Loading...</p>
+                <p id="gold">Gold: Loading...</p>
+                <p id="silver">Silver: Loading...</p>
+            </div>
         </div>
 
         <div class="input-container">
-            <input type="number" id="speedInput" placeholder="Enter speed">
+            <input type="number" id="speedInput" placeholder="Enter speed (0-1000)" min="0" max="1000">
             <button onclick="updateSpeed()">Update Speed</button>
         </div>
 
         <div class="input-container">
-            <input type="number" id="fuelInput" placeholder="Enter fuel amount">
+            <input type="number" id="fuelInput" placeholder="Enter fuel (0-1000)" min="0" max="1000">
             <button onclick="refuel()">Refuel</button>
         </div>
 
@@ -36,6 +52,12 @@
                 <option value="OFF">OFF</option>
             </select>
             <button onclick="setPower()">Set Power</button>
+        </div>
+
+        <div class="sensor-panel">
+            <button onclick="activateSensor('temperature')">Check Temperature</button>
+            <button onclick="activateSensor('humidity')">Check Humidity</button>
+            <button onclick="gatherResources()">Mine Resources</button>
         </div>
     </div>
 </body>

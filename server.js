@@ -4,14 +4,23 @@ const bodyParser = require('body-parser');
 const { generateSensorData, generateResourceData } = require('./spacecraft-utils');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware configuration
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Gegevens van het ruimtevoertuig in geheugen
+// Input validation middleware
+const validateAction = (req, res, next) => {
+    const validActions = ['togglePower', 'move', 'refuel', 'activateSensor', 'gatherResources'];
+    if (!validActions.includes(req.body.action)) {
+        return res.status(400).json({ error: 'Invalid action type' });
+    }
+    next();
+};
+
+// Initialize spacecraft status
 let spacecraftStatus = {
     power: 'OFF',
     speed: 0,
@@ -28,7 +37,7 @@ let spacecraftStatus = {
     }
 };
 
-// Routes
+// Application routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -43,32 +52,45 @@ app.get('/status', (req, res) => {
     });
 });
 
-app.post('/action', (req, res) => {
+app.post('/action', validateAction, (req, res) => {
     const { action, details } = req.body;
-    switch (action) {
-        case 'togglePower':
-            spacecraftStatus.power = spacecraftStatus.power === 'ON' ? 'OFF' : 'ON';
-            break;
-        case 'move':
-            spacecraftStatus.speed = parseInt(details.speed);
-            break;
-        case 'refuel':
-            spacecraftStatus.fuel = parseInt(details.fuel);
-            break;
-        case 'activateSensor':
-            if (details.sensor && spacecraftStatus.sensors[details.sensor] !== undefined) {
-                spacecraftStatus.sensors[details.sensor] = generateSensorData(details.sensor);
-            }
-            break;
-        case 'gatherResources':
-            spacecraftStatus.resources = generateResourceData();
-            break;
-        default:
-            return res.status(400).json({ error: 'Unknown action' });
+    try {
+        switch (action) {
+            case 'togglePower':
+                spacecraftStatus.power = spacecraftStatus.power === 'ON' ? 'OFF' : 'ON';
+                break;
+            case 'move':
+                const newSpeed = parseInt(details.speed);
+                if (isNaN(newSpeed) || newSpeed < 0 || newSpeed > 1000) {
+                    throw new Error('Invalid speed value (0-1000)');
+                }
+                spacecraftStatus.speed = newSpeed;
+                break;
+            case 'refuel':
+                const newFuel = parseInt(details.fuel);
+                if (isNaN(newFuel) || newFuel < 0 || newFuel > 1000) {
+                    throw new Error('Invalid fuel value (0-1000)');
+                }
+                spacecraftStatus.fuel = newFuel;
+                break;
+            case 'activateSensor':
+                if (details.sensor && spacecraftStatus.sensors[details.sensor] !== undefined) {
+                    spacecraftStatus.sensors[details.sensor] = generateSensorData(details.sensor);
+                }
+                break;
+            case 'gatherResources':
+                spacecraftStatus.resources = generateResourceData();
+                break;
+            default:
+                return res.status(400).json({ error: 'Unknown action' });
+        }
+        res.json({ message: 'Action executed', status: spacecraftStatus });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
-    res.json({ message: 'Action executed', status: spacecraftStatus });
 });
 
+// Start server
 app.listen(PORT, () => {
-    console.log(`Spacecraft backend is running on http://localhost:${PORT}`);
+    console.log(`Spacecraft backend running on http://localhost:${PORT}`);
 });
