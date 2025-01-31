@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spacecraft Control Panel</title>
+    <link rel="stylesheet" type="text/css" href="/styles/styles.css">
+    <script src="/scripts/scripts.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <img src="/images/rover.png" />
+        <div id="status">
+            <p id="power">Power: <span>Loading...</span></p>
+            <div id="speed-fuel">
+                <p id="speed">Speed: Loading...</p>
+                <p id="fuel">Fuel: Loading...</p>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input type="number" id="speedInput" placeholder="Enter speed">
+            <button onclick="updateSpeed()">Update Speed</button>
+        </div>
+
+        <div class="input-container">
+            <input type="number" id="fuelInput" placeholder="Enter fuel amount">
+            <button onclick="refuel()">Refuel</button>
+        </div>
+
+        <div class="input-container">
+            <select id="powerInput">
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+            </select>
+            <button onclick="setPower()">Set Power</button>
+        </div>
+    </div>
+</body>
+
+</html>
